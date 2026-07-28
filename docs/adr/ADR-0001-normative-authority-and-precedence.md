@@ -1,8 +1,7 @@
 # ADR-0001 — Normative Authority and Governance Precedence
-*Status: Accepted*
-*Accepted by: Ennio Princi (Human Project Owner)*
-*Acceptance date: 2026-07-27*
-*Evidence: Git commit history — ADR-0001 acceptance commit*
+*Status: Proposed*
+*Date: 2026-07-27*
+*Decision Owners: CognOS Project Owner (human approval required before this ADR moves to Accepted)*
 
 
 ---
