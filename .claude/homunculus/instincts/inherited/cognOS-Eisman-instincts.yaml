@@ -1,0 +1,344 @@
+# Instincts generated from https://github.com/acprofessionale/cognOS-Eisman
+# Generated: 2026-07-30T10:14:04.541Z
+# Version: 2.0
+# NOTE: This file supplements (does not replace) any existing curated instincts.
+# High-confidence manually curated instincts should be preserved alongside these.
+
+---
+id: cognOS-Eisman-commit-conventional
+trigger: "when writing a commit message"
+confidence: 0.85
+domain: git
+source: repo-analysis
+source_repo: https://github.com/acprofessionale/cognOS-Eisman
+---
+
+# CognOS Eisman Commit Conventional
+
+## Action
+
+Use conventional commit format with prefixes: fix, docs
+
+## Evidence
+
+- 2 commits analyzed
+- Detected conventional commit pattern
+- Examples: fix(adr): revert ADR-0001 to Proposed and fix CR-01 evidence chain, docs(adr): ratify ADR-0001
+
+---
+id: cognOS-Eisman-commit-length
+trigger: "when writing a commit message"
+confidence: 0.6
+domain: git
+source: repo-analysis
+source_repo: https://github.com/acprofessionale/cognOS-Eisman
+---
+
+# CognOS Eisman Commit Length
+
+## Action
+
+Keep commit messages concise (~46 characters)
+
+## Evidence
+
+- Average commit message length: 46 chars
+- Based on 2 commits
+
+---
+id: cognOS-Eisman-naming-files
+trigger: "when creating a new file"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/acprofessionale/cognOS-Eisman
+---
+
+# CognOS Eisman Naming Files
+
+## Action
+
+Use kebab-case naming convention
+
+## Evidence
+
+- Analyzed file naming patterns in repository
+- Dominant pattern: kebab-case
+
+---
+id: cognOS-Eisman-import-relative
+trigger: "when importing modules"
+confidence: 0.75
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/acprofessionale/cognOS-Eisman
+---
+
+# CognOS Eisman Import Relative
+
+## Action
+
+Use relative imports for project files
+
+## Evidence
+
+- Import analysis shows relative import pattern
+- Example: import { x } from '../lib/x'
+
+---
+id: cognOS-Eisman-export-style
+trigger: "when exporting from a module"
+confidence: 0.7
+domain: code-style
+source: repo-analysis
+source_repo: https://github.com/acprofessionale/cognOS-Eisman
+---
+
+# CognOS Eisman Export Style
+
+## Action
+
+Prefer named exports
+
+## Evidence
+
+- Export pattern analysis
+- Dominant style: named
+
+---
+id: cognOS-Eisman-test-separate
+trigger: "when writing tests"
+confidence: 0.8
+domain: testing
+source: repo-analysis
+source_repo: https://github.com/acprofessionale/cognOS-Eisman
+---
+
+# CognOS Eisman Test Separate
+
+## Action
+
+Place tests in the tests/ or __tests__/ directory, mirroring src structure
+
+## Evidence
+
+- Separate test directory pattern detected
+- Tests live in dedicated test folders
+
+---
+id: cognOS-Eisman-workflow-adr-lifecycle-management
+trigger: "when doing adr lifecycle management"
+confidence: 0.6
+domain: workflow
+source: repo-analysis
+source_repo: https://github.com/acprofessionale/cognOS-Eisman
+---
+
+# CognOS Eisman Workflow Adr Lifecycle Management
+
+## Action
+
+Follow the adr-lifecycle-management workflow:
+1. Edit the ADR markdown file to update its status or content.
+2. Update or create supporting review or change request files to reflect the ADR's new status or provide evidence.
+
+## Evidence
+
+- Workflow detected from commit patterns
+- Frequency: ~2x per month
+- Files: docs/adr/ADR-*.md, docs/reviews/ADR-*-RATIFICATION.md, docs/adr/CR-*-adr-*-change-request.md
+
+---
+id: cognos-eisman-instinct-filename-kebab-case
+trigger: "When creating or renaming a file in the codebase"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: acprofessionale/cognOS-Eisman
+---
+
+# Cognos Eisman Instinct Filename Kebab Case
+
+## Action
+
+Use kebab-case for file names (e.g., my-component.ts)
+
+## Evidence
+
+- Pattern in namingConventions.files: kebab-case
+
+---
+id: cognos-eisman-instinct-function-camelCase
+trigger: "When defining a function"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: acprofessionale/cognOS-Eisman
+---
+
+# Cognos Eisman Instinct Function CamelCase
+
+## Action
+
+Name the function using camelCase (e.g., processInput)
+
+## Evidence
+
+- Pattern in namingConventions.functions: camelCase
+
+---
+id: cognos-eisman-instinct-class-PascalCase
+trigger: "When defining a class"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: acprofessionale/cognOS-Eisman
+---
+
+# Cognos Eisman Instinct Class PascalCase
+
+## Action
+
+Name the class using PascalCase (e.g., UserManager)
+
+## Evidence
+
+- Pattern in namingConventions.classes: PascalCase
+
+---
+id: cognos-eisman-instinct-constant-SCREAMING_SNAKE_CASE
+trigger: "When declaring a constant"
+confidence: 0.9
+domain: code-style
+source: repo-analysis
+source_repo: acprofessionale/cognOS-Eisman
+---
+
+# Cognos Eisman Instinct Constant SCREAMING_SNAKE_CASE
+
+## Action
+
+Name the constant using SCREAMING_SNAKE_CASE (e.g., MAX_RETRIES)
+
+## Evidence
+
+- Pattern in namingConventions.constants: SCREAMING_SNAKE_CASE
+
+---
+id: cognos-eisman-instinct-import-relative
+trigger: "When importing modules within the codebase"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: acprofessionale/cognOS-Eisman
+---
+
+# Cognos Eisman Instinct Import Relative
+
+## Action
+
+Use relative import paths (e.g., import { X } from './module')
+
+## Evidence
+
+- Pattern in importStyle: relative
+
+---
+id: cognos-eisman-instinct-export-named
+trigger: "When exporting modules or functions"
+confidence: 0.8
+domain: code-style
+source: repo-analysis
+source_repo: acprofessionale/cognOS-Eisman
+---
+
+# Cognos Eisman Instinct Export Named
+
+## Action
+
+Use named exports (e.g., export function foo())
+
+## Evidence
+
+- Pattern in exportStyle: named
+
+---
+id: cognos-eisman-instinct-test-location-separate
+trigger: "When adding or updating tests"
+confidence: 0.7
+domain: testing
+source: repo-analysis
+source_repo: acprofessionale/cognOS-Eisman
+---
+
+# Cognos Eisman Instinct Test Location Separate
+
+## Action
+
+Place test files in a separate test directory, not mixed with source files
+
+## Evidence
+
+- architecture.folderStructure.testLocation: separate
+
+---
+id: cognos-eisman-instinct-git-conventional-commits
+trigger: "When writing a commit message"
+confidence: 0.9
+domain: git
+source: repo-analysis
+source_repo: acprofessionale/cognOS-Eisman
+---
+
+# Cognos Eisman Instinct Git Conventional Commits
+
+## Action
+
+Use conventional commit prefixes (e.g., fix, docs) followed by a scope and a concise description
+
+## Evidence
+
+- commits.type: conventional
+- commits.prefixes: ['fix', 'docs']
+- Example: fix(adr): revert ADR-0001 to Proposed and fix CR-01 evidence chain
+
+---
+id: cognos-eisman-instinct-git-commit-length
+trigger: "When composing a commit message"
+confidence: 0.7
+domain: git
+source: repo-analysis
+source_repo: acprofessionale/cognOS-Eisman
+---
+
+# Cognos Eisman Instinct Git Commit Length
+
+## Action
+
+Keep the commit message concise, around 46 characters on average
+
+## Evidence
+
+- commits.averageLength: 46
+
+---
+id: cognos-eisman-instinct-adr-lifecycle-management
+trigger: "When updating the status of an ADR or ensuring supporting documentation is consistent"
+confidence: 0.95
+domain: workflow
+source: repo-analysis
+source_repo: acprofessionale/cognOS-Eisman
+---
+
+# Cognos Eisman Instinct Adr Lifecycle Management
+
+## Action
+
+Edit the ADR markdown file and update or create supporting review or change request files to reflect the ADR's new status or provide evidence
+
+## Evidence
+
+- workflow: adr-lifecycle-management
+- files: docs/adr/ADR-*.md, docs/reviews/ADR-*-RATIFICATION.md, docs/adr/CR-*-adr-*-change-request.md
+- commit examples: fix(adr): revert ADR-0001 to Proposed and fix CR-01 evidence chain
+
