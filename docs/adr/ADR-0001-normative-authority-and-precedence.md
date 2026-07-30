@@ -1,5 +1,8 @@
 # ADR-0001 — Normative Authority and Governance Precedence
-*Status: Proposed*
+*Status: Accepted*
+*Accepted by: Human Project Owner*
+*Acceptance date: 2026-07-30*
+*Evidence: docs/reviews/ADR-0001-RATIFICATION.md*
 *Date: 2026-07-27*
 *Decision Owners: CognOS Project Owner (human approval required before this ADR moves to Accepted)*
 
@@ -255,7 +258,7 @@ This ADR may move from `Proposed` to `Accepted` only when ALL of the following c
 | V-06 | No Design Tenet (T-01–T-12) redefines A0–A4 | Confirmed: T-01–T-12 as read contain no autonomy classification. (`docs/design-tenets.md:24–225`) | **MET — T-01–T-12 contain no autonomy classification. A0–A4 are defined exclusively in Core at `CognOS-Core/docs/COGNOS_Architecture_Manifesto_v0.2.md:778–785` and `CognOS-Core/docs/GLOSSARY.md:73`. No Eisman document defines or references A0–A4.** |
 | V-07 | T-04 annotated with its Core cross-references | The applicable Core references have been identified and are recorded in this ADR (Problem Statement; Cross-Domain Obligation Rule): P1 (`v0.2:142–146`), P5 (`v0.2:173–191`), P6 (`v0.2:193–197`), D-003 (`v0.2:1015–1017`), D-008 (`v0.2:1035–1037`), D-009 (`v0.2:1039–1041`), Constitutional Invariant 1 (`v0.2:238`), Core ADR-0002. Applying the annotation modifies `docs/design-tenets.md` and is tracked as **FU-01**. FU-01 is blocking for completion of the Foundation Review, **not** for acceptance of this ADR. No annotation is required before acceptance. | DEFERRED — non-blocking for acceptance of this ADR. The applicable CognOS-Core references have been identified and are recorded in this ADR (Problem Statement; Cross-Domain Obligation Rule). Applying the annotation to `docs/design-tenets.md` is tracked as FU-01, which is non-blocking for acceptance of this ADR and blocking for completion of the Foundation Review. |
 | V-08 | Authority Matrix has no unresolved ownership overlaps | All 12 matrix data rows reviewed; overlaps documented and assigned | **MET — 12 data rows verified against Core v0.2. Eleven rows predate CR-01; CR-01 added exactly one row (Programme governance, security policy and policy-as-code), giving twelve data rows in total. That row closes the finding previously recorded here: Core v0.2 §0 places GOVERNANCE.md and SECURITY.md at level 2 of the Core hierarchy (`CognOS-Core/docs/COGNOS_Architecture_Manifesto_v0.2.md:29`), and this authority is now represented in the Authority Matrix. All `[TO BE VERIFIED]` and `TO BE VERIFIED` markers are resolved against CognOS-Core current main. No unresolved ownership overlaps remain.** |
-| V-09 | Human project owner explicitly approves this ADR in writing | Written approval recorded (GitHub PR approval, meeting minutes, or equivalent) | **OPEN — required** |
+| V-09 | Human project owner explicitly approves this ADR in writing | Written approval recorded (GitHub PR approval, meeting minutes, or equivalent) | **CLOSED — See docs/reviews/ADR-0001-RATIFICATION.md.** |
 
 ### Follow-up Actions
 
