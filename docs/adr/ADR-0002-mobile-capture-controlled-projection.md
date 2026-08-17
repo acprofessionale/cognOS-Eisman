@@ -1,8 +1,10 @@
 # ADR-0002 — Mobile Capture and Controlled Projection
 
-**Status:** Proposed  
+**Status:** Accepted  
 **Date:** 2026-08-17  
 **Decision owner:** Human Project Owner  
+**Acceptance evidence:** `docs/reviews/ADR-0002-RATIFICATION.md`  
+**Ratified candidate SHA:** `61fea054e9c4faa9520ff2f92dc31dbce1494292`  
 **Normative scope:** `VERTICAL_EISMAN_PROVISIONAL`  
 **Core authority:** CognOS-Core v0.2 remains authoritative for runtime safety, execution authority, R0–R4/A0–A4 and constitutional deny semantics.  
 **Promotion rule:** No vertical decision becomes Core authority by inheritance. Any promotion requires a fresh CognOS-Core ADR, complete re-derivation, review and explicit ratification.
@@ -167,4 +169,4 @@ It is explicitly provisional and non-normative for Core. If experience from this
 - exact candidate SHA identified;
 - explicit Human Project Owner ratification after review.
 
-Until then, status remains **Proposed**.
+All acceptance criteria required for this decision were satisfied for the ratified candidate and are materialized in `docs/reviews/ADR-0002-RATIFICATION.md`. Status is therefore **Accepted**.
