@@ -1,0 +1,36 @@
+name: Capture MVP
+
+on:
+  pull_request:
+    paths:
+      - 'capture/**'
+      - 'schemas/capture/**'
+      - 'tests/test_capture.py'
+      - 'docs/capture/**'
+      - '.github/workflows/capture-mvp.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'capture/**'
+      - 'schemas/capture/**'
+      - 'tests/test_capture.py'
+      - 'docs/capture/**'
+      - '.github/workflows/capture-mvp.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Unit tests
+        run: python3 -m unittest tests/test_capture.py -v
+      - name: Compile check
+        run: python3 -m py_compile capture/capture.py tests/test_capture.py
