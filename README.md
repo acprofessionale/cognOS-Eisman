@@ -134,3 +134,13 @@ The shared core — **CognOS-Core** — provides the common infrastructure, gove
 ---
 
 *CognOS Ecosystem — Knowledge before code. Architecture before implementation. Vision before execution.*
+
+## LUMEN Truth Center pilot
+
+CognOS-Eisman is the first operational vertical adopting the ratified Truth Center profile and LUMEN Decision Passport v0.1.
+
+- [ADR-0003 — LUMEN Truth Center Adoption](docs/adr/ADR-0003-lumen-truth-center-adoption.md)
+- [Real-Photo Receipt Validation Runbook](docs/workflows/lumen-real-photo-validation.md)
+
+The pilot binds field evidence, proposal intent, proportional governance, operator approval, execution, and verification to one portable `decision_id`. It does not expand Eisman's runtime authority.
+
