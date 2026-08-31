@@ -7,6 +7,11 @@ weakening the original requirement. CI proves deterministic mechanics; this
 procedure proves the proposal writer against the previously validated real-photo
 capture on the operator host.
 
+The validation proposal is deliberately **ephemeral**: it is created through the
+real proposal writer, read back and checked, hashed for the evidence result, then
+removed. The raw capture and the normal review queue therefore remain unchanged
+by the validation exercise.
+
 ## Existing source evidence
 
 PR #7 recorded a successful real-device ingest on 2026-08-17 at exact candidate
@@ -51,6 +56,10 @@ The JSON result must also show:
 - `publication_class: DENY`
 - `canonical_promotion: false`
 - `semantic_image_assertion: false`
+- `proposal_ephemeral: true`
+- `proposal_cleanup: true`
+- a 64-character `proposal_sha256` for the exact ephemeral proposal bytes that
+  were exercised;
 - the exact source SHA-256 above.
 
 If the same image bytes were ingested more than once, the gate fails closed and
@@ -65,16 +74,21 @@ python3 -m capture.real_photo_gate \
 
 ## What the gate verifies
 
-1. the selected receipt is still `INBOX` and `DENY`;
-2. its content-addressed object exists inside the capture root;
-3. the object SHA-256 still matches the receipt and the known real-photo digest;
-4. proposal creation leaves the raw receipt byte-for-byte unchanged;
-5. the proposal links to the exact capture ID and SHA-256;
-6. the receipt reference persisted in the proposal is portable/relative, not an
+1. the selected receipt is still raw-capture v1, `INBOX`, `DENY`, inference-free
+   and in the expected vertical normative scope;
+2. the receipt content-addressed `object_ref` is consistent with its SHA-256;
+3. the referenced object exists inside the capture root;
+4. the object SHA-256 still matches the receipt and the known real-photo digest;
+5. proposal creation leaves the raw receipt byte-for-byte unchanged;
+6. the proposal links to the exact capture ID and SHA-256;
+7. the receipt reference persisted in the proposal is portable/relative, not an
    operator absolute path;
-7. proposal state remains non-canonical and publication remains denied.
+8. proposal state remains non-canonical and publication remains denied;
+9. the validation proposal is removed after verification so the operator review
+   queue is not polluted by test data.
 
 ## Non-goals
 
 The gate does not infer what is in the photo, call an AI provider, create a
-canonical entity, publish content, or grant any new authority.
+canonical entity, publish content, or grant any new authority. Its proposal
+SHA-256 is an evidence checksum, not a digital signature or proof of authenticity.
