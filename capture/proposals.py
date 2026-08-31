@@ -11,36 +11,62 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import tempfile
 import uuid
 from datetime import datetime, timezone
 from pathlib import Path
 
 SCHEMA_ID = "cognos-eisman/capture-proposal/v1"
+RAW_CAPTURE_SCHEMA_ID = "cognos-eisman/raw-capture/v1"
 NORMATIVE_SCOPE = "VERTICAL_EISMAN_PROVISIONAL"
 PUBLICATION_CLASS = "DENY"
 ALLOWED_MODES = {"HUMAN_ASSERTED", "AI_PROPOSED", "AI_EXTRACTED"}
 ALLOWED_TYPES = {"OBSERVATION", "CLAIM", "RELATION", "ENTITY_CANDIDATE"}
+CAPTURE_ID_RE = re.compile(r"^cap_[0-9a-f]{32}$")
+SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 
 
 def load_receipt(path: Path) -> dict:
     receipt = json.loads(path.expanduser().resolve(strict=True).read_text(encoding="utf-8"))
-    required = ["capture_id", "capture_state", "publication_class", "content"]
+    required = [
+        "schema_id",
+        "schema_version",
+        "normative_scope",
+        "capture_id",
+        "capture_state",
+        "publication_class",
+        "content",
+        "derived_assertions",
+    ]
     missing = [key for key in required if key not in receipt]
     if missing:
         raise ValueError(f"capture receipt missing required fields: {missing}")
+    if receipt["schema_id"] != RAW_CAPTURE_SCHEMA_ID or receipt["schema_version"] != 1:
+        raise ValueError("proposal source must be a raw-capture v1 receipt")
+    if receipt["normative_scope"] != NORMATIVE_SCOPE:
+        raise ValueError("proposal source has unexpected normative_scope")
+    if not isinstance(receipt["capture_id"], str) or not CAPTURE_ID_RE.fullmatch(receipt["capture_id"]):
+        raise ValueError("capture receipt has invalid capture_id")
     if receipt["capture_state"] != "INBOX":
         raise ValueError("proposal source capture must remain INBOX")
     if receipt["publication_class"] != "DENY":
         raise ValueError("proposal source capture must be DENY")
+    if receipt["derived_assertions"] != []:
+        raise ValueError("proposal source raw capture must remain inference-free")
+
     content = receipt.get("content", {})
+    if not isinstance(content, dict):
+        raise ValueError("capture receipt content must be an object")
     if content.get("digest_algorithm") != "sha256":
         raise ValueError("capture receipt digest algorithm must be sha256")
     sha256 = content.get("sha256")
-    if not isinstance(sha256, str) or len(sha256) != 64:
+    if not isinstance(sha256, str) or not SHA256_RE.fullmatch(sha256):
         raise ValueError("capture receipt has invalid sha256")
-    if not isinstance(content.get("object_ref"), str) or not content["object_ref"]:
-        raise ValueError("capture receipt has invalid object_ref")
+    object_ref = content.get("object_ref")
+    expected_ref = f"objects/sha256/{sha256[:2]}/{sha256}"
+    if object_ref != expected_ref:
+        raise ValueError("capture receipt object_ref is inconsistent with its sha256")
     return receipt
 
 
