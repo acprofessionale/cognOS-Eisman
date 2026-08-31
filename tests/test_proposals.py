@@ -56,6 +56,39 @@ class ProposalTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "must be DENY"):
                 write_proposal(receipt_path, root, "CLAIM", "x", "HUMAN_ASSERTED", 0.5)
 
+    def test_rejects_non_raw_capture_schema(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            root, receipt_path, _ = self._capture(base)
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+            receipt["schema_id"] = "example/not-a-raw-capture"
+            receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+
+            with self.assertRaisesRegex(ValueError, "raw-capture v1"):
+                write_proposal(receipt_path, root, "CLAIM", "x", "HUMAN_ASSERTED", 0.5)
+
+    def test_rejects_raw_capture_with_derived_assertions(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            root, receipt_path, _ = self._capture(base)
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+            receipt["derived_assertions"] = ["not raw anymore"]
+            receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+
+            with self.assertRaisesRegex(ValueError, "inference-free"):
+                write_proposal(receipt_path, root, "CLAIM", "x", "HUMAN_ASSERTED", 0.5)
+
+    def test_rejects_object_ref_inconsistent_with_digest(self):
+        with tempfile.TemporaryDirectory() as td:
+            base = Path(td)
+            root, receipt_path, _ = self._capture(base)
+            receipt = json.loads(receipt_path.read_text(encoding="utf-8"))
+            receipt["content"]["object_ref"] = "objects/sha256/00/not-the-object"
+            receipt_path.write_text(json.dumps(receipt), encoding="utf-8")
+
+            with self.assertRaisesRegex(ValueError, "object_ref"):
+                write_proposal(receipt_path, root, "CLAIM", "x", "HUMAN_ASSERTED", 0.5)
+
     def test_rejects_invalid_confidence(self):
         with tempfile.TemporaryDirectory() as td:
             base = Path(td)
@@ -71,7 +104,7 @@ class ProposalTests(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, "inside the configured capture root"):
                 write_proposal(receipt_path, other_root, "CLAIM", "x", "AI_PROPOSED", 0.5)
 
-    def test_real_photo_gate_mechanics_pass_on_ingested_jpeg(self):
+    def test_real_photo_gate_mechanics_pass_and_cleanup_ephemeral_proposal(self):
         with tempfile.TemporaryDirectory() as td:
             base = Path(td)
             root, receipt_path, receipt = self._capture(base, b"real-device-equivalent-test-bytes")
@@ -83,8 +116,11 @@ class ProposalTests(unittest.TestCase):
             self.assertTrue(evidence["raw_receipt_unchanged"])
             self.assertFalse(evidence["canonical_promotion"])
             self.assertFalse(evidence["semantic_image_assertion"])
+            self.assertTrue(evidence["proposal_ephemeral"])
+            self.assertTrue(evidence["proposal_cleanup"])
+            self.assertEqual(len(evidence["proposal_sha256"]), 64)
             self.assertEqual(receipt_path.read_bytes(), before)
-            self.assertTrue((root / evidence["proposal_ref"]).is_file())
+            self.assertFalse((root / evidence["ephemeral_proposal_ref"]).exists())
 
     def test_real_photo_gate_blocks_tampered_object(self):
         with tempfile.TemporaryDirectory() as td:
@@ -111,6 +147,7 @@ class ProposalTests(unittest.TestCase):
 
             evidence = run_gate(root, digest, second["capture_id"])
             self.assertEqual(evidence["capture_id"], second["capture_id"])
+            self.assertTrue(evidence["proposal_cleanup"])
 
 
 if __name__ == "__main__":
