@@ -3,7 +3,8 @@
 
 This gate is intentionally host-local. It locates a previously ingested capture
 by SHA-256, verifies the content-addressed object, creates one non-canonical
-proposal, and proves that the raw receipt bytes were not mutated.
+proposal, proves that the raw receipt bytes were not mutated, then removes the
+test proposal so validation does not pollute the operator review queue.
 
 It does not inspect image semantics, promote knowledge, publish content, or call
 an AI provider.
@@ -12,6 +13,7 @@ an AI provider.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from pathlib import Path
 
@@ -78,52 +80,70 @@ def run_gate(root: Path, digest: str, capture_id: str | None = None) -> dict:
     if object_digest.lower() != digest.lower():
         raise GateError("requested digest does not match stored object")
 
-    result = write_proposal(
-        receipt_path,
-        root,
-        "OBSERVATION",
-        GATE_TEXT,
-        "AI_PROPOSED",
-        1.0,
-    )
+    proposal_path: Path | None = None
+    evidence: dict | None = None
+    try:
+        result = write_proposal(
+            receipt_path,
+            root,
+            "OBSERVATION",
+            GATE_TEXT,
+            "HUMAN_ASSERTED",
+            1.0,
+        )
 
-    receipt_after = receipt_path.read_bytes()
-    if receipt_after != receipt_before:
-        raise GateError("raw capture receipt mutated during proposal creation")
+        proposal_path = _inside(root, Path(result["proposal_path"]))
+        proposal_bytes = proposal_path.read_bytes()
+        proposal_sha256 = hashlib.sha256(proposal_bytes).hexdigest()
+        proposal = json.loads(proposal_bytes.decode("utf-8"))
 
-    proposal_path = _inside(root, Path(result["proposal_path"]))
-    proposal = json.loads(proposal_path.read_text(encoding="utf-8"))
-    expected_source = {
-        "capture_id": receipt["capture_id"],
-        "sha256": receipt["content"]["sha256"],
-        "receipt_ref": receipt_path.relative_to(root).as_posix(),
-    }
-    if proposal.get("source_capture") != expected_source:
-        raise GateError("proposal source linkage does not match raw capture")
-    if proposal.get("proposal_state") != "PROPOSED":
-        raise GateError("proposal_state is not PROPOSED")
-    if proposal.get("review_state") != "PENDING":
-        raise GateError("review_state is not PENDING")
-    if proposal.get("publication_class") != "DENY":
-        raise GateError("publication_class is not DENY")
-    if proposal.get("canonical_entity_ref") is not None:
-        raise GateError("proposal unexpectedly contains a canonical entity reference")
+        receipt_after = receipt_path.read_bytes()
+        if receipt_after != receipt_before:
+            raise GateError("raw capture receipt mutated during proposal creation")
 
-    return {
-        "verdict": "REAL_PHOTO_PROPOSAL_GATE_PASS",
-        "capture_id": receipt["capture_id"],
-        "source_sha256": digest.lower(),
-        "receipt_ref": receipt_path.relative_to(root).as_posix(),
-        "object_ref": object_path.relative_to(root).as_posix(),
-        "proposal_id": proposal["proposal_id"],
-        "proposal_ref": proposal_path.relative_to(root).as_posix(),
-        "raw_receipt_unchanged": True,
-        "proposal_state": proposal["proposal_state"],
-        "review_state": proposal["review_state"],
-        "publication_class": proposal["publication_class"],
-        "canonical_promotion": False,
-        "semantic_image_assertion": False,
-    }
+        expected_source = {
+            "capture_id": receipt["capture_id"],
+            "sha256": receipt["content"]["sha256"],
+            "receipt_ref": receipt_path.relative_to(root).as_posix(),
+        }
+        if proposal.get("source_capture") != expected_source:
+            raise GateError("proposal source linkage does not match raw capture")
+        if proposal.get("proposal_state") != "PROPOSED":
+            raise GateError("proposal_state is not PROPOSED")
+        if proposal.get("review_state") != "PENDING":
+            raise GateError("review_state is not PENDING")
+        if proposal.get("publication_class") != "DENY":
+            raise GateError("publication_class is not DENY")
+        if proposal.get("canonical_entity_ref") is not None:
+            raise GateError("proposal unexpectedly contains a canonical entity reference")
+
+        evidence = {
+            "verdict": "REAL_PHOTO_PROPOSAL_GATE_PASS",
+            "capture_id": receipt["capture_id"],
+            "source_sha256": digest.lower(),
+            "receipt_ref": receipt_path.relative_to(root).as_posix(),
+            "object_ref": object_path.relative_to(root).as_posix(),
+            "proposal_id": proposal["proposal_id"],
+            "ephemeral_proposal_ref": proposal_path.relative_to(root).as_posix(),
+            "proposal_sha256": proposal_sha256,
+            "raw_receipt_unchanged": True,
+            "proposal_state": proposal["proposal_state"],
+            "review_state": proposal["review_state"],
+            "publication_class": proposal["publication_class"],
+            "canonical_promotion": False,
+            "semantic_image_assertion": False,
+            "proposal_ephemeral": True,
+        }
+    finally:
+        if proposal_path is not None and proposal_path.exists():
+            proposal_path.unlink()
+
+    if evidence is None:
+        raise GateError("proposal evidence was not produced")
+    if proposal_path is not None and proposal_path.exists():
+        raise GateError("ephemeral validation proposal cleanup failed")
+    evidence["proposal_cleanup"] = True
+    return evidence
 
 
 def _parser() -> argparse.ArgumentParser:
